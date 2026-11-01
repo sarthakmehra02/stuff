@@ -72,3 +72,10 @@ Current checkpoint: the full local suite passes (16 tests). Phase 2 is complete.
 - Colab model/runtime record: Qwen2.5-3B-Instruct, NF4 4-bit/double quantization/fp16, seed 42, Tesla T4, 2942 MiB peak allocated. Mean latencies: zero-shot 13.92 s, prompted 1.35 s, RAG 4.78 s. The notebook cell reports 20m12s for the resumed full-set run.
 - Preliminary answer inspection found an off-topic RAG answer (q030) and a RAG citation containing a clause number (q025), which conflicts with the project citation rule. Preserve this run unchanged; include these in later error analysis.
 - Baseline generation is complete. Blind judging waits until the fine-tuned condition outputs are also available.
+
+## Phase 4 QLoRA training results received
+
+- Both summary files are valid. `training_summary.json` was the 40-example, 20-step smoke run in `run1_smoke`; the renamed local `training_summary.json` is the 482-example full run in `run1`.
+- Full run completed 3 epochs/93 steps in 631.4 seconds, with final train loss 1.0509, validation loss 1.5238, and 4935.4 MiB peak allocated on the T4. Script reports no overfitting signal. Validation curve is nearly flat/slightly lower after the first evaluation; the 25-example validation set is small.
+- Smoke completed in 187.9 seconds with 4830.1 MiB peak allocated. Smoke and full curves/summaries are stored as separate files in `results/`.
+- Next handoff: Phase 5, run Notebook 03's five-question preview for `finetuned` and `finetuned_rag`; review before the full set, then download both raw files and updated metadata.

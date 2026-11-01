@@ -63,7 +63,8 @@ PMFBY retained pages use printed/PDF page ranges 11, 14–23, 47–69, 88–126,
 - Human bad-example rate from the 50-pair review: `TODO(user)`.
 - Train/validation counts after chunk-level 95/5 split: `TODO(user)`.
 - QLoRA parameters: rank 16, alpha 32, dropout 0.05; target attention and MLP projections; max length 384; batch 4; gradient accumulation 4; learning rate 2e-4; cosine schedule; warmup 0.03; 3 epochs; fp16 true and bf16 false; seed 42.
-- Adapter, steps, training time, final train/validation loss, peak memory, overfitting signal, and Colab library versions: `TODO(user)` from `training_summary.json`.
+- Full QLoRA run: 482 train examples, 25 validation examples, 93 steps, 3 epochs, 631.4 seconds (10m31s), final train loss 1.0509, final validation loss 1.5238, peak allocated GPU memory 4935.4 MiB. The script's overfitting signal is false. Full curve: `results/loss_curve.png`; summary: `results/training_summary.json`.
+- Separate smoke run: 40 train examples, 20 steps, 187.9 seconds, final train loss 1.2936, final validation loss 1.7237, peak allocated GPU memory 4830.1 MiB. Outputs are retained separately as `results/training_summary_smoke.json` and `results/loss_curve_smoke.png`.
 
 ## Answer evaluation and analysis
 
@@ -80,7 +81,7 @@ PMFBY retained pages use printed/PDF page ranges 11, 14–23, 47–69, 88–126,
 
 - Python available for local checks: 3.12.2.
 - Isolated temporary verification environment (not a Colab record): pytest 9.2.0, torch 2.15.0, transformers 5.22.1, sentence-transformers 6.2.0, faiss-cpu 1.15.1, NumPy 2.5.4, pandas 3.1.0, matplotlib 3.11.2, OpenAI SDK 3.42.0.
-- Actual Colab baseline versions: torch 2.11.0+cu130, transformers 4.57.6, peft 0.21.2, trl 0.29.1, bitsandbytes 0.50.2, sentence-transformers 3.4.1, faiss-cpu 1.15.1.
+- Actual Colab baseline/training versions: torch 2.11.0+cu130, transformers 4.57.6, peft 0.21.2, trl 0.29.1, bitsandbytes 0.50.2, datasets 4.8.5, sentence-transformers 3.4.1, faiss-cpu 1.15.1.
 - NVIDIA NIM smoke: **PASS** — teacher and judge each returned clean one-word and JSON responses. The original teacher model ID returned 404, so the teacher endpoint was updated to the verified Nemotron 3.5 Super VL endpoint. The five-chunk preview then completed with JSON parsing enabled and no-thinking request option.
 
 ## Limitations
