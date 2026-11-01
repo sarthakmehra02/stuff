@@ -1,5 +1,5 @@
 from src.analyze_results import bootstrap_ci, mcnemar_exact
-from src.judge import ANSWER_PROMPT, extract_json_object, is_refusal
+from src.judge import ANSWER_PROMPT, extract_json_object, format_prompt, is_refusal
 
 
 def test_bootstrap_and_mcnemar_known_values():
@@ -17,5 +17,5 @@ def test_json_extraction_and_refusal_matching():
 
 
 def test_answer_judge_prompt_formats_json_example():
-    prompt = ANSWER_PROMPT.format(question="Q", gold="G", answer="A", answerable="true")
+    prompt = format_prompt(ANSWER_PROMPT, question="Q", gold="G", answer="A", answerable="true")
     assert '{"verdict":"...","reason":"one sentence"}' in prompt

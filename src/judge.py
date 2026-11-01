@@ -18,7 +18,7 @@ PROMPT_VERSION = "judge-v1"
 ANSWER_PROMPT = """Grade the answer without guessing which system produced it. You see only a question, a reference answer, and a candidate answer.
 For answerable questions, use verdict correct if all key facts in the reference are present and nothing contradicts it, partial if some key facts are missing/wrong, and wrong otherwise.
 For unanswerable questions, use refused if the candidate says the information is unavailable and gives no specific answer; otherwise use hallucinated.
-Return only JSON: {{\"verdict\":\"...\",\"reason\":\"one sentence\"}}.
+Return only JSON: {\"verdict\":\"...\",\"reason\":\"one sentence\"}.
 
 Question: {question}
 Reference answer: {gold}
@@ -32,6 +32,13 @@ Retrieved excerpts: {context}"""
 
 def normalize(text: str) -> str:
     return " ".join(str(text or "").lower().split()).strip(" .!\t\n")
+
+
+def format_prompt(template: str, **values: str) -> str:
+    """Substitute named fields without treating JSON braces as format syntax."""
+    for key, value in values.items():
+        template = template.replace("{" + key + "}", str(value))
+    return template
 
 
 def is_refusal(text: str) -> bool:
@@ -121,7 +128,7 @@ def run_judging(conditions: list[str], limit: int | None = None, results_dir: Pa
             gold = gold_by_id[row["id"]]
             answer = row.get("answer", "")
             key = cache_key(JUDGE_MODEL, row["id"], answer)
-            judgement = _cached_call(client, cache, key, ANSWER_PROMPT.format(
+            judgement = _cached_call(client, cache, key, format_prompt(ANSWER_PROMPT,
                 question=row["question"], gold=row["gold_answer"], answer=answer,
                 answerable=str(bool(row.get("answerable", gold.get("answerable")))).lower()))
             verdict = str(judgement.get("verdict", "wrong")).lower()
@@ -134,7 +141,7 @@ def run_judging(conditions: list[str], limit: int | None = None, results_dir: Pa
                                     if item.get("chunk_id") in chunk_map]
                 context = "\n\n".join(retrieved_chunks)
                 fkey = cache_key(JUDGE_MODEL, row["id"], answer + context, "faithfulness-v1")
-                faith = _cached_call(client, cache, fkey, FAITHFUL_PROMPT.format(
+                faith = _cached_call(client, cache, fkey, format_prompt(FAITHFUL_PROMPT,
                     question=row["question"], answer=answer, context=context))
                 faithfulness = faith.get("verdict", "unsupported")
                 if faithfulness not in {"supported", "partial", "unsupported"}:
