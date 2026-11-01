@@ -1,0 +1,152 @@
+[
+  {
+    "id": "update_001",
+    "question": "In the synthetic PM-KISAN update, what cut-off date determines beneficiary eligibility?",
+    "gold_answer": "The synthetic cut-off date is 01.02.2020.",
+    "type": "synthetic_update",
+    "scheme": "PM-KISAN",
+    "old_answer": "The original PM-KISAN eligibility cut-off date in the source text is 01.02.2019.",
+    "answerable": true,
+    "source_file": "pmkisan_operational_guidelines_2020.pdf",
+    "source_pages": [
+      3
+    ],
+    "synthetic": true,
+    "synthetic_update_label": "SYNTHETIC EXPERIMENT — NOT A REAL AMENDMENT"
+  },
+  {
+    "id": "update_002",
+    "question": "According to the clearly synthetic PM-KISAN experiment, which date is used for eligibility?",
+    "gold_answer": "The synthetic cut-off date is 01.02.2020.",
+    "type": "synthetic_update",
+    "scheme": "PM-KISAN",
+    "old_answer": "The original PM-KISAN eligibility cut-off date in the source text is 01.02.2019.",
+    "answerable": true,
+    "source_file": "pmkisan_operational_guidelines_2020.pdf",
+    "source_pages": [
+      3
+    ],
+    "synthetic": true,
+    "synthetic_update_label": "SYNTHETIC EXPERIMENT — NOT A REAL AMENDMENT"
+  },
+  {
+    "id": "update_003",
+    "question": "For this synthetic update only, what is the PM-KISAN eligibility date?",
+    "gold_answer": "The synthetic cut-off date is 01.02.2020.",
+    "type": "synthetic_update",
+    "scheme": "PM-KISAN",
+    "old_answer": "The original PM-KISAN eligibility cut-off date in the source text is 01.02.2019.",
+    "answerable": true,
+    "source_file": "pmkisan_operational_guidelines_2020.pdf",
+    "source_pages": [
+      3
+    ],
+    "synthetic": true,
+    "synthetic_update_label": "SYNTHETIC EXPERIMENT — NOT A REAL AMENDMENT"
+  },
+  {
+    "id": "update_004",
+    "question": "In the synthetic PMFBY update, what maximum premium rate applies to Kharif food-grain and oilseed crops?",
+    "gold_answer": "The synthetic maximum is 2.5% of the sum insured or actuarial rate, whichever is less.",
+    "type": "synthetic_update",
+    "scheme": "PMFBY",
+    "old_answer": "The original maximum farmer premium is 2.0% of the sum insured or actuarial rate, whichever is less.",
+    "answerable": true,
+    "source_file": "pmfby_operational_guidelines_2023.pdf",
+    "source_pages": [
+      47
+    ],
+    "synthetic": true,
+    "synthetic_update_label": "SYNTHETIC EXPERIMENT — NOT A REAL AMENDMENT"
+  },
+  {
+    "id": "update_005",
+    "question": "What Kharif premium cap is used in the synthetic PMFBY experiment?",
+    "gold_answer": "The synthetic maximum is 2.5% of the sum insured or actuarial rate, whichever is less.",
+    "type": "synthetic_update",
+    "scheme": "PMFBY",
+    "old_answer": "The original maximum farmer premium is 2.0% of the sum insured or actuarial rate, whichever is less.",
+    "answerable": true,
+    "source_file": "pmfby_operational_guidelines_2023.pdf",
+    "source_pages": [
+      47
+    ],
+    "synthetic": true,
+    "synthetic_update_label": "SYNTHETIC EXPERIMENT — NOT A REAL AMENDMENT"
+  },
+  {
+    "id": "update_006",
+    "question": "For this synthetic change, what is the PMFBY Kharif farmer premium ceiling?",
+    "gold_answer": "The synthetic maximum is 2.5% of the sum insured or actuarial rate, whichever is less.",
+    "type": "synthetic_update",
+    "scheme": "PMFBY",
+    "old_answer": "The original maximum farmer premium is 2.0% of the sum insured or actuarial rate, whichever is less.",
+    "answerable": true,
+    "source_file": "pmfby_operational_guidelines_2023.pdf",
+    "source_pages": [
+      47
+    ],
+    "synthetic": true,
+    "synthetic_update_label": "SYNTHETIC EXPERIMENT — NOT A REAL AMENDMENT"
+  },
+  {
+    "id": "update_007",
+    "question": "In the synthetic 2025-26 KCC update, what is the lending rate to farmers?",
+    "gold_answer": "The synthetic lending rate is 8% per year.",
+    "type": "synthetic_update",
+    "scheme": "KCC",
+    "old_answer": "The original farmer lending rate for 2025-26 is 7% per year.",
+    "answerable": true,
+    "source_file": "kcc_interest_subvention_2025_26.pdf",
+    "source_pages": [
+      2
+    ],
+    "synthetic": true,
+    "synthetic_update_label": "SYNTHETIC EXPERIMENT — NOT A REAL AMENDMENT"
+  },
+  {
+    "id": "update_008",
+    "question": "What lending rate does the synthetic KCC experiment use for 2025-26?",
+    "gold_answer": "The synthetic lending rate is 8% per year.",
+    "type": "synthetic_update",
+    "scheme": "KCC",
+    "old_answer": "The original farmer lending rate for 2025-26 is 7% per year.",
+    "answerable": true,
+    "source_file": "kcc_interest_subvention_2025_26.pdf",
+    "source_pages": [
+      2
+    ],
+    "synthetic": true,
+    "synthetic_update_label": "SYNTHETIC EXPERIMENT — NOT A REAL AMENDMENT"
+  },
+  {
+    "id": "update_009",
+    "question": "For the synthetic 2025-26 circular only, state the KCC farmer lending rate.",
+    "gold_answer": "The synthetic lending rate is 8% per year.",
+    "type": "synthetic_update",
+    "scheme": "KCC",
+    "old_answer": "The original farmer lending rate for 2025-26 is 7% per year.",
+    "answerable": true,
+    "source_file": "kcc_interest_subvention_2025_26.pdf",
+    "source_pages": [
+      2
+    ],
+    "synthetic": true,
+    "synthetic_update_label": "SYNTHETIC EXPERIMENT — NOT A REAL AMENDMENT"
+  },
+  {
+    "id": "update_010",
+    "question": "Has the synthetic KCC example changed the 2025-26 lending rate to 8%?",
+    "gold_answer": "Yes. The synthetic lending rate is 8% per year.",
+    "type": "synthetic_update",
+    "scheme": "KCC",
+    "old_answer": "The original farmer lending rate for 2025-26 is 7% per year.",
+    "answerable": true,
+    "source_file": "kcc_interest_subvention_2025_26.pdf",
+    "source_pages": [
+      2
+    ],
+    "synthetic": true,
+    "synthetic_update_label": "SYNTHETIC EXPERIMENT — NOT A REAL AMENDMENT"
+  }
+]

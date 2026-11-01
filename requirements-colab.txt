@@ -1,0 +1,12 @@
+# Install into the active Colab runtime without replacing Colab's preinstalled torch.
+transformers>=4.45,<5
+peft>=0.13,<1
+trl>=0.11,<1
+bitsandbytes>=0.43,<1
+accelerate>=0.34,<2
+datasets>=3,<5
+sentence-transformers>=3,<4
+faiss-cpu>=1.8
+gradio>=4,<7
+huggingface_hub>=0.25,<2
+python-dotenv>=1

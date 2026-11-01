@@ -1,0 +1,52 @@
+# Environment & Secrets
+.env
+.env.*
+!.env.example
+
+# Raw Data (large PDF files & archives)
+data/raw_pdfs/
+Data/raw_pdfs/
+data/old_versions/
+Data/old_versions/
+
+# Model Checkpoints & Adapters
+models/
+checkpoints/
+*.pt
+*.bin
+*.safetensors
+
+# Cache & Local Databases
+cache/
+*.sqlite
+*.sqlite3
+.chroma/
+
+# Python Cache & Bytecode
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.pytest_cache/
+
+# Virtual Environments
+.venv/
+venv/
+ENV/
+env/
+
+# IDE & OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Local human-readable phase work log (not committed)
+human.md
+
+# Results & Intermediate Artifacts (keep final reports, ignore large raw generations if needed)
+data/processed/*.bin
+data/processed/faiss_metadata.json
+data/processed/faiss_manifest.json
+data/update_test/faiss_metadata.json
+data/update_test/faiss_manifest.json

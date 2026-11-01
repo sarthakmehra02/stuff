@@ -1,0 +1,21 @@
+{
+  "label": "SYNTHETIC EXPERIMENT — NOT A REAL AMENDMENT",
+  "edits": [
+    {
+      "chunk_id": "pmkisan_operational_guid_p003_c003",
+      "old_text": "cut-off date for determination of eligibility of beneficiaries under the scheme shall be 01.02.2019",
+      "new_text": "cut-off date for determination of eligibility of beneficiaries under the scheme shall be 01.02.2020"
+    },
+    {
+      "chunk_id": "pmfby_operational_guidel_p047_c020",
+      "old_text": "2.0% of SI or Actuarial rate, whichever is less",
+      "new_text": "2.5% of SI or Actuarial rate, whichever is less"
+    },
+    {
+      "chunk_id": "kcc_interest_subvention__p002_c004",
+      "old_text": "2025-26 7% 1.50%",
+      "new_text": "2025-26 8% 1.50%"
+    }
+  ],
+  "notice": "These edits are synthetic and do not reflect real amendments."
+}

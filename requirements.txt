@@ -1,0 +1,13 @@
+# Local CPU-side workflow: retrieval, teacher/judge calls, results, and PDF ingestion.
+openai>=1.50,<3
+python-dotenv>=1
+requests>=2.31
+numpy>=1.24
+pandas>=2
+matplotlib>=3.8
+PyMuPDF>=1.24
+tiktoken>=0.7
+sentence-transformers>=3,<4
+transformers>=4.45,<5
+faiss-cpu>=1.8
+pytest>=8
