@@ -59,3 +59,9 @@ Final dataset: KCC 51, PM-KISAN 24, PMFBY 432; direct 213, Hinglish 149, paraphr
 Reviewed 50 pairs against their evidence and source chunks. One item (2%) was bad: its question asked for a deadline in days while the evidence said 48 hours. This is below the prompt's ~15% threshold. The sample CSV now contains good/bad grades and a note. Created the chunk-level seed-42 split: 482 training examples (162 chunks), 25 validation examples (8 chunks), with zero chunk overlap.
 
 Current checkpoint: the full local suite passes (16 tests). Phase 2 is complete. The next required handoff is Phase 3/User Action 1: run the Colab baseline preview, review five answers per condition, then confirm before the full 60-question baseline run.
+
+## Public GitHub handoff
+
+- The user requested a public repository. Commit `a00c78f` (`Complete farmer schemes RAG project`) was pushed to `main` at `https://github.com/sarthakmehra02/stuff`.
+- Repository visibility was changed to public and confirmed with an unauthenticated GitHub API read. The public notebook file is readable without authentication.
+- `.env`, raw PDFs, old versions, model weights, caches, FAISS artifacts, test backups, and local `human.md` were excluded. Notebook clone cells use the public URL and no GitHub token.

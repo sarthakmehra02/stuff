@@ -8,6 +8,10 @@ data/raw_pdfs/
 Data/raw_pdfs/
 data/old_versions/
 Data/old_versions/
+data/backups/
+*.bak
+/test_qa.json
+data/test_qa_batch*.json
 
 # Model Checkpoints & Adapters
 models/

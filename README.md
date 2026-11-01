@@ -2,6 +2,8 @@
 
 A reproducible term-project benchmark comparing five ways to answer questions about official PM-KISAN, PMFBY, and Kisan Credit Card (KCC) documents. The evaluated model is always `Qwen/Qwen2.5-3B-Instruct`; the NIM teacher creates synthetic training examples and a separate, larger NIM judge grades answers.
 
+Public repository: [github.com/sarthakmehra02/stuff](https://github.com/sarthakmehra02/stuff). The Colab notebooks clone it without a GitHub token.
+
 ## Research conditions
 
 | Condition | LoRA adapter | Retrieved context | Prompt |
