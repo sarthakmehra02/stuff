@@ -65,3 +65,10 @@ Current checkpoint: the full local suite passes (16 tests). Phase 2 is complete.
 - The user requested a public repository. Commit `a00c78f` (`Complete farmer schemes RAG project`) was pushed to `main` at `https://github.com/sarthakmehra02/stuff`.
 - Repository visibility was changed to public and confirmed with an unauthenticated GitHub API read. The public notebook file is readable without authentication.
 - `.env`, raw PDFs, old versions, model weights, caches, FAISS artifacts, test backups, and local `human.md` were excluded. Notebook clone cells use the public URL and no GitHub token.
+
+## Phase 3 baseline run received
+
+- Imported the user's Colab archive into local `results/`: 60 unique rows each for zero-shot, prompted, and RAG, plus `run_metadata.json`. Metadata fingerprint matches the frozen local prompt fingerprint and commit `32359aa`.
+- Colab model/runtime record: Qwen2.5-3B-Instruct, NF4 4-bit/double quantization/fp16, seed 42, Tesla T4, 2942 MiB peak allocated. Mean latencies: zero-shot 13.92 s, prompted 1.35 s, RAG 4.78 s. The notebook cell reports 20m12s for the resumed full-set run.
+- Preliminary answer inspection found an off-topic RAG answer (q030) and a RAG citation containing a clause number (q025), which conflicts with the project citation rule. Preserve this run unchanged; include these in later error analysis.
+- Baseline generation is complete. Blind judging waits until the fine-tuned condition outputs are also available.

@@ -11,7 +11,7 @@ Use this file as the source of factual numbers in the report. Unknown experiment
 - Teacher: `nvidia/nemotron-3.5-super-vl-120b-a12b` (NIM; synthetic QA only; no-thinking mode is requested for JSON-only output).
 - Judge: `nvidia/nemotron-3-ultra-550b-a55b` (NIM; blind answer grading and RAG faithfulness only).
 - Prompt fingerprint for the current implementation: `da2331af8b29cd7eb7355586a30dd46ad6a16a5e72764c1b7335f815a38db9d5`.
-- Git commit hash: `TODO(user): commit the project before the first full model run`.
+- Git commit hash for the baseline run: `32359aa9177be7fafd6439047e263fce83d6684e`.
 
 ## Source corpus
 
@@ -67,9 +67,9 @@ PMFBY retained pages use printed/PDF page ranges 11, 14–23, 47–69, 88–126,
 
 ## Answer evaluation and analysis
 
-- Per-condition raw and judged row counts: `TODO(user)`; expected 60 each after all five conditions are run.
+- Baseline raw rows: 60 each for `zero_shot`, `prompted`, and `rag` (180 total), all IDs unique. Raw files and `run_metadata.json` are in `results/`. Fine-tuned raw rows and all judged rows remain pending.
 - Strict/lenient accuracy and 95% bootstrap intervals: `TODO(user)` in `results/summary_overall.csv`, `summary_by_type.csv`, `summary_by_scheme.csv`.
-- Hallucination rate on 9 unanswerable items, false-refusal rate, RAG faithfulness, mean/p95 latency, and mean generated tokens: `TODO(user)`.
+- Baseline mean answer latency from the raw rows: zero-shot 13.92 s, prompted 1.35 s, RAG 4.78 s. Peak GPU memory allocated: 2942 MiB on Tesla T4. P95 latency, hallucination/false-refusal rates, RAG faithfulness, and mean generated tokens: pending blind judging/analysis.
 - Pairwise exact two-sided McNemar tests and discordant counts: `TODO(user)` in `results/paired_tests.csv` (n=51 is small).
 - Retrieval-hit × correctness tables: `TODO(user)` in `results/retrieval_vs_correctness.csv`.
 - Judge manual agreement and Cohen's kappa: `TODO(user)` in `results/judge_agreement.json`.
@@ -80,7 +80,7 @@ PMFBY retained pages use printed/PDF page ranges 11, 14–23, 47–69, 88–126,
 
 - Python available for local checks: 3.12.2.
 - Isolated temporary verification environment (not a Colab record): pytest 9.2.0, torch 2.15.0, transformers 5.22.1, sentence-transformers 6.2.0, faiss-cpu 1.15.1, NumPy 2.5.4, pandas 3.1.0, matplotlib 3.11.2, OpenAI SDK 3.42.0.
-- Actual Colab versions: `TODO(user)`; the baseline notebook prints versions.
+- Actual Colab baseline versions: torch 2.11.0+cu130, transformers 4.57.6, peft 0.21.2, trl 0.29.1, bitsandbytes 0.50.2, sentence-transformers 3.4.1, faiss-cpu 1.15.1.
 - NVIDIA NIM smoke: **PASS** — teacher and judge each returned clean one-word and JSON responses. The original teacher model ID returned 404, so the teacher endpoint was updated to the verified Nemotron 3.5 Super VL endpoint. The five-chunk preview then completed with JSON parsing enabled and no-thinking request option.
 
 ## Limitations
