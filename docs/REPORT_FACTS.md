@@ -68,9 +68,9 @@ PMFBY retained pages use printed/PDF page ranges 11, 14–23, 47–69, 88–126,
 
 ## Answer evaluation and analysis
 
-- Baseline raw rows: 60 each for `zero_shot`, `prompted`, and `rag` (180 total), all IDs unique. Raw files and `run_metadata.json` are in `results/`. Fine-tuned raw rows and all judged rows remain pending.
+- Raw rows: 60 each for all five conditions (300 total), all IDs unique and matched to the fixed test set. Raw files and current `run_metadata.json` are in `results/`; original baseline metadata is preserved as `results/run_metadata_baseline.json`. Judged rows remain pending.
 - Strict/lenient accuracy and 95% bootstrap intervals: `TODO(user)` in `results/summary_overall.csv`, `summary_by_type.csv`, `summary_by_scheme.csv`.
-- Baseline mean answer latency from the raw rows: zero-shot 13.92 s, prompted 1.35 s, RAG 4.78 s. Peak GPU memory allocated: 2942 MiB on Tesla T4. P95 latency, hallucination/false-refusal rates, RAG faithfulness, and mean generated tokens: pending blind judging/analysis.
+- Mean answer latency from raw rows: zero-shot 13.92 s, prompted 1.35 s, RAG 4.78 s, finetuned 3.86 s, finetuned+RAG 6.62 s. Peak GPU memory allocated: 2942 MiB on Tesla T4 in evaluation metadata; fine-tuning peak is 4935.4 MiB. P95 latency, hallucination/false-refusal rates, RAG faithfulness, and mean generated tokens: pending blind judging/analysis.
 - Pairwise exact two-sided McNemar tests and discordant counts: `TODO(user)` in `results/paired_tests.csv` (n=51 is small).
 - Retrieval-hit × correctness tables: `TODO(user)` in `results/retrieval_vs_correctness.csv`.
 - Judge manual agreement and Cohen's kappa: `TODO(user)` in `results/judge_agreement.json`.

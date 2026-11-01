@@ -79,3 +79,10 @@ Current checkpoint: the full local suite passes (16 tests). Phase 2 is complete.
 - Full run completed 3 epochs/93 steps in 631.4 seconds, with final train loss 1.0509, validation loss 1.5238, and 4935.4 MiB peak allocated on the T4. Script reports no overfitting signal. Validation curve is nearly flat/slightly lower after the first evaluation; the 25-example validation set is small.
 - Smoke completed in 187.9 seconds with 4830.1 MiB peak allocated. Smoke and full curves/summaries are stored as separate files in `results/`.
 - Next handoff: Phase 5, run Notebook 03's five-question preview for `finetuned` and `finetuned_rag`; review before the full set, then download both raw files and updated metadata.
+
+## Phase 5 fine-tuned evaluation outputs received
+
+- Imported `raw_finetuned.jsonl`, `raw_finetuned_rag.jsonl`, and updated `run_metadata.json`; retained the original base-only metadata as `run_metadata_baseline.json`.
+- Both fine-tuned conditions contain all 60 unique test IDs; questions and gold answers match the fixed test file. `finetuned_rag` rows have four retrieved chunks. Prompt fingerprint is unchanged and adapter path is recorded.
+- Mean latency: finetuned 3.86s; finetuned+RAG 6.62s. All five raw condition files now contain 60 rows each.
+- Next: run the required five-item blind-judge preview for all conditions, show verdicts, then wait before full judging.
