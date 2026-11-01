@@ -33,8 +33,8 @@ This runbook keeps all NVIDIA NIM work on the local Windows machine. Colab recei
 ### Notebook 02 — fine-tuning
 
 1. Confirm the train/validation JSONL files exist in the repository.
-2. Run the 20-step `--smoke` cell. Review the printed decoded masking preview: system and question tokens should be masked, while the assistant answer should be supervised.
-3. If the smoke run finishes, run full training. The adapter, checkpoints, `training_summary.json`, and `loss_curve.png` are written under `MyDrive/farmer-llm/run1/`.
+2. Run the 20-step `--smoke` cell. It saves to `MyDrive/farmer-llm/run1_smoke/`, separate from full-training checkpoints. Review the printed decoded masking preview: system and question tokens should be masked, while the assistant answer should be supervised.
+3. If the smoke run finishes, run full training. The adapter, checkpoints, `training_summary.json`, and `loss_curve.png` are written under `MyDrive/farmer-llm/run1/`; the smoke checkpoint will not be resumed by the full run.
 4. After a disconnect, reconnect Drive, re-run setup, and re-run the training command. The script resumes from the newest checkpoint it finds.
 
 ### Notebook 03 — fine-tuned conditions
