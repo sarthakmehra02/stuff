@@ -18,7 +18,7 @@ PROMPT_VERSION = "judge-v1"
 ANSWER_PROMPT = """Grade the answer without guessing which system produced it. You see only a question, a reference answer, and a candidate answer.
 For answerable questions, use verdict correct if all key facts in the reference are present and nothing contradicts it, partial if some key facts are missing/wrong, and wrong otherwise.
 For unanswerable questions, use refused if the candidate says the information is unavailable and gives no specific answer; otherwise use hallucinated.
-Return only JSON: {\"verdict\":\"...\",\"reason\":\"one sentence\"}.
+Return only JSON: {{\"verdict\":\"...\",\"reason\":\"one sentence\"}}.
 
 Question: {question}
 Reference answer: {gold}

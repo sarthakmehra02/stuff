@@ -1,5 +1,5 @@
 from src.analyze_results import bootstrap_ci, mcnemar_exact
-from src.judge import extract_json_object, is_refusal
+from src.judge import ANSWER_PROMPT, extract_json_object, is_refusal
 
 
 def test_bootstrap_and_mcnemar_known_values():
@@ -14,3 +14,8 @@ def test_json_extraction_and_refusal_matching():
     assert extract_json_object('preface {"x": 1} trailing') == {"x": 1}
     assert is_refusal(" Not found in the documents. ")
     assert not is_refusal("Not found in the document")
+
+
+def test_answer_judge_prompt_formats_json_example():
+    prompt = ANSWER_PROMPT.format(question="Q", gold="G", answer="A", answerable="true")
+    assert '{"verdict":"...","reason":"one sentence"}' in prompt
