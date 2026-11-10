@@ -115,7 +115,9 @@ Run `notebooks/04_demo.ipynb` on a Colab T4 to launch the five-panel Gradio demo
 - Test set: 60 questions; 51 answerable and 9 unanswerable.
 - Retrieval: hit@1 28/51 (54.90%); hit@4 48/51 (94.12%). The three hit@4 misses are q042, q044, and q049.
 - The retrieval manifest SHA-256 matches `data/processed/chunks.json`.
-- These are retrieval and data-validation facts only. No model answer comparison or judge score is claimed until the Colab and NIM outputs exist.
+- All five answer conditions have 60 outputs. A source-key review found no substantive factual errors in the 51 answerable gold answers; the 9 unanswerable items are not covered by the supplied corpus. See `docs/GOLD_KEY_AUDIT.md`.
+- Second-pass exact overall scores (correct answers plus correct refusals, divided by all 60): zero-shot 7/60 (11.7%), prompted 13/60 (21.7%), RAG 30/60 (50.0%), fine-tuned 6/60 (10.0%), fine-tuned+RAG 30/60 (50.0%). Fine-tuned+RAG scored 30/51 (58.8%) on answerable items but hallucinated on all nine unanswerable items; plain RAG refused all nine. Details and the six judge-label adjustments are in `results/second_pass_answer_audit.md`.
+- Scores come from a blind NVIDIA NIM LLM judge followed by an assistant second-pass review. They are not yet independently human-validated; interpret them as preliminary term-project findings, not deployment performance.
 
 ## Limitations
 

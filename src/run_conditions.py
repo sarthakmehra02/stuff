@@ -13,7 +13,7 @@ PROJECT_ROOT = Path(__file__).resolve().parents[1]
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
-from config import MODEL_ID, PATHS, RESULTS_DIR, SEED, TEST_QA_FILE, TOP_K
+from config import MODEL_ID, PATHS, RESULTS_DIR, SEED, TEST_QA_FILE, TOP_K, RERANKER_MODEL, RERANK_CANDIDATES
 from src.prompts import CONDITIONS, build_messages, prompt_fingerprint
 
 if sys.platform.startswith("win"):
@@ -83,7 +83,8 @@ def _write_metadata(path: Path, fingerprint: str, adapter_path: str | None, star
 
 def run_conditions(conditions: list[str], limit: int | None = None, adapter: str | None = None,
                    out: Path = RESULTS_DIR, resume: bool = False, model=None, tokenizer=None,
-                   retrieve_fn=None, generate_fn=None) -> dict[str, Path]:
+                   retrieve_fn=None, generate_fn=None, rerank: bool = False,
+                   candidate_k: int = RERANK_CANDIDATES) -> dict[str, Path]:
     unknown = set(conditions) - set(CONDITIONS)
     if unknown:
         raise ValueError(f"Unknown conditions: {sorted(unknown)}")
@@ -103,7 +104,12 @@ def run_conditions(conditions: list[str], limit: int | None = None, adapter: str
     if retrieve_fn is None and set(conditions) & RAG_CONDITIONS:
         from src.rag import build_index, retrieve
         build_index()
-        retrieve_fn = retrieve
+        if rerank:
+            def retrieve_fn(question, k=TOP_K):
+                return retrieve(question, k=k, rerank=True,
+                                reranker_model=RERANKER_MODEL, candidate_k=candidate_k)
+        else:
+            retrieve_fn = retrieve
 
     fingerprint = prompt_fingerprint()
     started = datetime.now(timezone.utc).isoformat()
@@ -123,14 +129,25 @@ def run_conditions(conditions: list[str], limit: int | None = None, adapter: str
                 messages = build_messages(condition, item["question"], chunks=retrieved if condition in RAG_CONDITIONS else None)
                 result = generate_fn(model, tokenizer, messages, use_adapter=condition in ADAPTER_CONDITIONS,
                                      max_new_tokens=300)
+                retrieved_metadata = []
+                for chunk in retrieved:
+                    metadata = {"chunk_id": chunk.get("id"),
+                                "source_file": chunk.get("source_file"),
+                                "page": chunk.get("page"), "score": chunk.get("score")}
+                    # Keep the original output schema for ordinary retrieval;
+                    # add diagnostics only when reranking produced them.
+                    if chunk.get("embedding_score") is not None:
+                        metadata["embedding_score"] = chunk["embedding_score"]
+                    if chunk.get("rerank_score") is not None:
+                        metadata["rerank_score"] = chunk["rerank_score"]
+                    retrieved_metadata.append(metadata)
                 record = {
                     "id": item["id"], "condition": condition, "question": item["question"],
                     "gold_answer": item["gold_answer"], "type": item["type"], "scheme": item["scheme"],
                     "answerable": item["answerable"], "answer": result["text"],
                     "latency_s": result["latency_s"], "prompt_tokens": result["prompt_tokens"],
                     "new_tokens": result["new_tokens"],
-                    "retrieved": [{"chunk_id": c.get("id"), "source_file": c.get("source_file"),
-                                   "page": c.get("page"), "score": c.get("score")} for c in retrieved],
+                    "retrieved": retrieved_metadata,
                     "model_id": MODEL_ID, "adapter_path": adapter if condition in ADAPTER_CONDITIONS else None,
                     "timestamp": datetime.now(timezone.utc).isoformat(),
                 }
@@ -150,10 +167,14 @@ def main() -> None:
     parser.add_argument("--adapter")
     parser.add_argument("--out", type=Path, default=RESULTS_DIR)
     parser.add_argument("--resume", action="store_true")
+    parser.add_argument("--rerank", action="store_true",
+                        help="Use cross-encoder reranking for RAG conditions.")
+    parser.add_argument("--candidate-k", type=int, default=RERANK_CANDIDATES)
     args = parser.parse_args()
     logging.basicConfig(level=logging.INFO)
     run_conditions([part.strip() for part in args.conditions.split(",") if part.strip()],
-                   args.limit, args.adapter, args.out, args.resume)
+                   args.limit, args.adapter, args.out, args.resume,
+                   rerank=args.rerank, candidate_k=args.candidate_k)
 
 
 if __name__ == "__main__":

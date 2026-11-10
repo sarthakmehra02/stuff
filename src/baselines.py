@@ -155,6 +155,8 @@ def rag_answer(
     tokenizer: Optional[Any] = None,
     scheme: Optional[str] = None,
     max_new_tokens: int = 300,
+    rerank: bool = False,
+    candidate_k: int = 20,
 ) -> Dict[str, Any]:
     """Retrieval-augmented baseline using top-k semantic retrieval and local Qwen generation.
 
@@ -165,6 +167,8 @@ def rag_answer(
         tokenizer: Optional pre-loaded tokenizer.
         scheme: Optional scheme filter.
         max_new_tokens: Maximum tokens to generate.
+        rerank: Apply cross-encoder reranking to the semantic candidate pool.
+        candidate_k: Number of embedding candidates scored by the reranker.
 
     Returns:
         {"answer": str, "latency": float, "retrieved_ids": List[str]}
@@ -193,6 +197,8 @@ def rag_answer(
         k=k,
         scheme=scheme,
         generate_fn=qwen_generate_fn,
+        rerank=rerank,
+        candidate_k=candidate_k,
     )
 
     retrieved_ids = [c["id"] for c in chunks if "id" in c]

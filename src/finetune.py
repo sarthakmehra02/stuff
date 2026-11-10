@@ -40,7 +40,9 @@ def load_jsonl(path: Path) -> list[dict]:
     return [json.loads(line) for line in path.read_text(encoding="utf-8").splitlines() if line.strip()]
 
 
-def train(train_path: Path, val_path: Path, out_path: Path, epochs: int = 3, smoke: bool = False):
+def train(train_path: Path, val_path: Path, out_path: Path, epochs: int = 3,
+          smoke: bool = False, max_seq_length: int = 1024,
+          learning_rate: float = 1e-4):
     import torch
     import matplotlib.pyplot as plt
     from datasets import Dataset
@@ -74,9 +76,9 @@ def train(train_path: Path, val_path: Path, out_path: Path, epochs: int = 3, smo
     val_rows = load_jsonl(val_path)
     if smoke:
         train_rows = train_rows[:40]
-    train_data = Dataset.from_list([format_example(row, tokenizer) for row in train_rows])
-    val_data = Dataset.from_list([format_example(row, tokenizer) for row in val_rows])
-    preview = format_example(train_rows[0], tokenizer)
+    train_data = Dataset.from_list([format_example(row, tokenizer, max_seq_length) for row in train_rows])
+    val_data = Dataset.from_list([format_example(row, tokenizer, max_seq_length) for row in val_rows])
+    preview = format_example(train_rows[0], tokenizer, max_seq_length)
     print("MASKING CHECK — decoded prompt tokens (masked) followed by supervised answer tokens:")
     print(tokenizer.decode([token for token, label in zip(preview["input_ids"], preview["labels"]) if label == -100]))
     print("SUPERVISED ANSWER:", tokenizer.decode([label for label in preview["labels"] if label != -100]))
@@ -84,11 +86,11 @@ def train(train_path: Path, val_path: Path, out_path: Path, epochs: int = 3, smo
     checkpoint_dir = out_path / "checkpoints"
     checkpoint_dir.mkdir(parents=True, exist_ok=True)
     args_dict = dict(
-        output_dir=str(checkpoint_dir), num_train_epochs=epochs, per_device_train_batch_size=4,
-        gradient_accumulation_steps=4, learning_rate=2e-4, lr_scheduler_type="cosine",
-        warmup_ratio=0.03, fp16=True, bf16=False, optim="paged_adamw_8bit",
-        seed=SEED, eval_strategy="steps", eval_steps=25, logging_steps=5,
-        save_strategy="steps", save_steps=50, save_total_limit=3,
+        output_dir=str(checkpoint_dir), num_train_epochs=epochs, per_device_train_batch_size=2,
+        gradient_accumulation_steps=8, learning_rate=learning_rate, lr_scheduler_type="cosine",
+        warmup_ratio=0.05, weight_decay=0.01, fp16=True, bf16=False, optim="paged_adamw_8bit",
+        seed=SEED, eval_strategy="epoch", logging_steps=10,
+        save_strategy="epoch", save_total_limit=3,
         gradient_checkpointing=True, report_to="none",
         max_steps=20 if smoke else -1,
     )
@@ -137,7 +139,7 @@ def train(train_path: Path, val_path: Path, out_path: Path, epochs: int = 3, smo
         "final_train_loss": train_metrics.get("train_final_loss", result.training_loss),
         "final_validation_loss": val_metrics.get("val_loss"), "train_metrics": train_metrics,
         "peak_gpu_mb": torch.cuda.max_memory_allocated() / (1024 ** 2), "overfitting_signal": overfit,
-        "hyperparameters": args_dict,
+        "max_seq_length": max_seq_length, "hyperparameters": args_dict,
         "library_versions": {p: metadata.version(p) for p in ("torch", "transformers", "peft", "trl", "bitsandbytes", "datasets")},
     }
     (out_path / "training_summary.json").write_text(json.dumps(summary, indent=2) + "\n", encoding="utf-8")
@@ -150,10 +152,13 @@ def main():
     parser.add_argument("--val", type=Path, default=Path("data/train_split/val.jsonl"))
     parser.add_argument("--out", type=Path, default=Path("outputs/run1"))
     parser.add_argument("--epochs", type=int, default=3)
+    parser.add_argument("--max-seq-length", type=int, default=1024)
+    parser.add_argument("--learning-rate", type=float, default=1e-4)
     parser.add_argument("--smoke", action="store_true")
     args = parser.parse_args()
     logging.basicConfig(level=logging.INFO)
-    train(args.train, args.val, args.out, args.epochs, args.smoke)
+    train(args.train, args.val, args.out, args.epochs, args.smoke,
+          args.max_seq_length, args.learning_rate)
 
 
 if __name__ == "__main__":

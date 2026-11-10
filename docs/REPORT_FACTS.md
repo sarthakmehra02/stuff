@@ -60,22 +60,24 @@ PMFBY retained pages use printed/PDF page ranges 11, 14–23, 47–69, 88–126,
 - Training pairs by scheme: KCC 51, PM-KISAN 24, PMFBY 432. By style: direct 213, Hinglish 149, paraphrase 145. No refusal examples were requested.
 - Manual review of the 50-pair sample: 1 bad item (2%). The bad item asked for a deadline in days while its evidence stated 48 hours. The automated candidate rejection share (109/616 = 17.7%) is not the human bad-example rate.
 - Chunk-disjoint split (seed 42): 482 train examples from 162 chunks; 25 validation examples from 8 chunks; no chunk overlap.
-- Human bad-example rate from the 50-pair review: `TODO(user)`.
-- Train/validation counts after chunk-level 95/5 split: `TODO(user)`.
+- Human bad-example rate from the 50-pair review: 1/50 (2%).
+- Train/validation counts after chunk-level 95/5 split: 482 train / 25 validation; 162 / 8 source chunks; zero chunk overlap.
 - QLoRA parameters: rank 16, alpha 32, dropout 0.05; target attention and MLP projections; max length 384; batch 4; gradient accumulation 4; learning rate 2e-4; cosine schedule; warmup 0.03; 3 epochs; fp16 true and bf16 false; seed 42.
 - Full QLoRA run: 482 train examples, 25 validation examples, 93 steps, 3 epochs, 631.4 seconds (10m31s), final train loss 1.0509, final validation loss 1.5238, peak allocated GPU memory 4935.4 MiB. The script's overfitting signal is false. Full curve: `results/loss_curve.png`; summary: `results/training_summary.json`.
 - Separate smoke run: 40 train examples, 20 steps, 187.9 seconds, final train loss 1.2936, final validation loss 1.7237, peak allocated GPU memory 4830.1 MiB. Outputs are retained separately as `results/training_summary_smoke.json` and `results/loss_curve_smoke.png`.
 
 ## Answer evaluation and analysis
 
-- Raw rows: 60 each for all five conditions (300 total), all IDs unique and matched to the fixed test set. Raw files and current `run_metadata.json` are in `results/`; original baseline metadata is preserved as `results/run_metadata_baseline.json`. Judged rows remain pending.
-- Strict/lenient accuracy and 95% bootstrap intervals: `TODO(user)` in `results/summary_overall.csv`, `summary_by_type.csv`, `summary_by_scheme.csv`.
-- Mean answer latency from raw rows: zero-shot 13.92 s, prompted 1.35 s, RAG 4.78 s, finetuned 3.86 s, finetuned+RAG 6.62 s. Peak GPU memory allocated: 2942 MiB on Tesla T4 in evaluation metadata; fine-tuning peak is 4935.4 MiB. P95 latency, hallucination/false-refusal rates, RAG faithfulness, and mean generated tokens: pending blind judging/analysis.
+- Raw rows: 60 each for all five conditions (300 total), all IDs unique and matched to the fixed test set. Raw files and current `run_metadata.json` are in `results/`; original baseline metadata is preserved as `results/run_metadata_baseline.json`.
+- Second-pass exact overall scores (correct answerable answers plus correct refusals, divided by 60): zero-shot 7/60 (11.7%), prompted 13/60 (21.7%), RAG 30/60 (50.0%), fine-tuned 6/60 (10.0%), fine-tuned+RAG 30/60 (50.0%). Exact answers on the 51 answerable questions: 1, 4, 21, 6, and 30 respectively. The fine-tuned+RAG condition hallucinated on all nine unanswerable questions; RAG refused all nine.
+- These scores use the blind NVIDIA NIM judge plus six assistant second-pass label adjustments documented in `results/second_pass_answer_audit.md`. They are preliminary and are not independent human annotations; partial/lenient scores are not reported as final.
+- Automated faithfulness verdicts: RAG 40 supported / 5 partial / 15 unsupported; fine-tuned+RAG 39 supported / 8 partial / 13 unsupported. These are judge outputs, not human-confirmed support labels.
+- Mean answer latency from raw rows: zero-shot 13.92 s, prompted 1.35 s, RAG 4.78 s, finetuned 3.86 s, finetuned+RAG 6.62 s. Peak GPU memory allocated: 2942 MiB on Tesla T4 in evaluation metadata; fine-tuning peak is 4935.4 MiB. P95 latency and mean generated tokens have not been computed.
 - Pairwise exact two-sided McNemar tests and discordant counts: `TODO(user)` in `results/paired_tests.csv` (n=51 is small).
 - Retrieval-hit × correctness tables: `TODO(user)` in `results/retrieval_vs_correctness.csv`.
-- Judge manual agreement and Cohen's kappa: `TODO(user)` in `results/judge_agreement.json`.
-- Error cases and wrong-scheme citations: `TODO(user)` in `results/error_analysis.md`.
-- Plots: `TODO(user)` in `results/plots/` after judged outputs are present.
+- Independent human/judge agreement and Cohen's kappa: `TODO(user)` in `results/judge_agreement.json`.
+- Error cases and wrong-scheme citations: pending structured error analysis; the source-key and answer second-pass reviews are recorded in `docs/GOLD_KEY_AUDIT.md` and `results/second_pass_answer_audit.md`.
+- Plots: pending; no summary plot is included yet.
 
 ## Environment versions
 

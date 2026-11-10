@@ -26,7 +26,6 @@ from typing import Any, Dict, List, Optional, Tuple
 
 import faiss
 import numpy as np
-from sentence_transformers import SentenceTransformer
 
 # Reconfigure standard output for UTF-8 on Windows consoles to print currency symbols (e.g. ₹)
 if sys.platform.startswith("win"):
@@ -43,6 +42,7 @@ if str(PROJECT_ROOT) not in sys.path:
 
 from config import PATHS, GENERATION_MODEL, ensure_directories
 from src.nim_client import NIMClient
+from src.reranker import DEFAULT_RERANKER_MODEL, rerank as cross_encoder_rerank
 
 
 # Default embedding model and query prefix for BGE
@@ -50,16 +50,18 @@ DEFAULT_EMBEDDING_MODEL = "BAAI/bge-small-en-v1.5"
 BGE_QUERY_PREFIX = "Represent this sentence for searching relevant passages: "
 
 # In-memory model cache
-_MODEL_CACHE: Dict[Tuple[str, str], SentenceTransformer] = {}
+_MODEL_CACHE: Dict[Tuple[str, str], Any] = {}
 
 
 def get_embedding_model(
     model_name: str = DEFAULT_EMBEDDING_MODEL,
     device: str = "cpu",
-) -> SentenceTransformer:
+) -> Any:
     """Load and cache the SentenceTransformer model on the requested device."""
     key = (model_name, device)
     if key not in _MODEL_CACHE:
+        from sentence_transformers import SentenceTransformer
+
         _MODEL_CACHE[key] = SentenceTransformer(model_name, device=device)
     return _MODEL_CACHE[key]
 
@@ -249,6 +251,9 @@ def retrieve(
     chunks: Optional[List[Dict[str, Any]]] = None,
     model_name: str = DEFAULT_EMBEDDING_MODEL,
     device: str = "cpu",
+    rerank: bool = False,
+    reranker_model: str = DEFAULT_RERANKER_MODEL,
+    candidate_k: int = 20,
 ) -> List[Dict[str, Any]]:
     """Retrieve top-k chunks matching question with cosine similarity scores.
 
@@ -281,11 +286,15 @@ def retrieve(
     )
     query_emb = np.ascontiguousarray(query_emb.astype("float32"))
 
+    # First-stage retrieval.  Reranking is applied after optional scheme
+    # filtering, so the cross-encoder never spends capacity on another scheme.
+    retrieval_k = max(k, candidate_k) if rerank else k
+
     # If scheme filter is applied, retrieve a larger candidate pool then filter
     if scheme:
         scheme_norm = scheme.strip().upper().replace("_", "-")
-        candidate_k = min(len(chunks), max(k * 10, 50))
-        scores, indices = index.search(query_emb, candidate_k)
+        search_k = min(len(chunks), max(retrieval_k * 10, 50))
+        scores, indices = index.search(query_emb, search_k)
 
         results: List[Dict[str, Any]] = []
         for score, idx in zip(scores[0], indices[0]):
@@ -296,12 +305,12 @@ def retrieve(
             if chunk_scheme == scheme_norm or scheme_norm in chunk_scheme:
                 chunk["score"] = round(float(score), 4)
                 results.append(chunk)
-                if len(results) == k:
+                if len(results) == retrieval_k:
                     break
-        return results
+        return cross_encoder_rerank(question, results, k, reranker_model, device) if rerank else results[:k]
 
-    # No filter: retrieve top-k directly
-    scores, indices = index.search(query_emb, min(k, len(chunks)))
+    # No filter: retrieve the candidate pool directly.
+    scores, indices = index.search(query_emb, min(retrieval_k, len(chunks)))
     results = []
     for score, idx in zip(scores[0], indices[0]):
         if idx < 0 or idx >= len(chunks):
@@ -310,7 +319,7 @@ def retrieve(
         chunk["score"] = round(float(score), 4)
         results.append(chunk)
 
-    return results
+    return cross_encoder_rerank(question, results, k, reranker_model, device) if rerank else results[:k]
 
 
 def build_rag_prompt(
@@ -355,9 +364,14 @@ def build_rag_prompt(
         "CRITICAL RULES:\n"
         "1. Direct Source Citations: Cite the specific source file and page number for every fact "
         "(e.g., [pmkisan_operational_guidelines_2020.pdf, Page 3]).\n"
-        "2. Strict Truthfulness: If the answer cannot be found in the provided context, respond "
-        "EXACTLY with:\n"
-        "   Not found in the documents\n\n"
+        "2. Context Relevance: First decide whether the provided context directly contains the "
+        "information needed to answer the question. If no relevant context is present, do not "
+        "answer from memory or general knowledge.\n"
+        "3. Strict Truthfulness: If the answer is absent, incomplete, or unsupported by the "
+        "provided context, respond EXACTLY with:\n"
+        "   Not found in the documents\n"
+        "Do not provide a guessed result, partial result, recommendation, or outside fact when "
+        "the context does not support the answer.\n\n"
         f"Context:\n"
         f"{context_str}\n\n"
         f"Question: {question}\n\n"
@@ -371,6 +385,9 @@ def answer(
     k: int = 4,
     scheme: Optional[str] = None,
     generate_fn: Optional[Any] = None,
+    rerank: bool = False,
+    reranker_model: str = DEFAULT_RERANKER_MODEL,
+    candidate_k: int = 20,
 ) -> Tuple[str, List[Dict[str, Any]], str, float, bool]:
     """Perform end-to-end RAG: retrieve chunks, assemble grounded prompt, generate answer.
 
@@ -390,7 +407,8 @@ def answer(
           external generate_fn callers will receive 0.0 / False respectively.
     """
     # 1. Retrieve top-k chunks
-    chunks = retrieve(question, k=k, scheme=scheme)
+    chunks = retrieve(question, k=k, scheme=scheme, rerank=rerank,
+                      reranker_model=reranker_model, candidate_k=candidate_k)
     if not chunks:
         return "Not found in the documents", [], "none", 0.0, False
 
@@ -485,6 +503,10 @@ def main():
         action="store_true",
         help="Display the assembled RAG prompt in output.",
     )
+    parser.add_argument("--rerank", action="store_true",
+                        help="Rerank an embedding candidate pool with a cross-encoder.")
+    parser.add_argument("--candidate-k", type=int, default=20,
+                        help="First-stage candidates before reranking (default: 20).")
     args = parser.parse_args()
 
     # Rebuild index mode
@@ -511,7 +533,8 @@ def main():
     print(f"TOP-K: {args.k} | EMBEDDINGS: {DEFAULT_EMBEDDING_MODEL} (CPU)")
     print("=" * 80)
 
-    results = retrieve(question, k=args.k, scheme=args.scheme)
+    results = retrieve(question, k=args.k, scheme=args.scheme, rerank=args.rerank,
+                       candidate_k=args.candidate_k)
 
     if not results:
         print("\nNo matching chunks found.")

@@ -10,7 +10,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 
 
-def split_by_chunk(input_path: Path, output_dir: Path, seed: int = 42, val_fraction: float = 0.05):
+def split_by_chunk(input_path: Path, output_dir: Path, seed: int = 42, val_fraction: float = 0.15):
     rows = [json.loads(line) for line in input_path.read_text(encoding="utf-8").splitlines() if line.strip()]
     grouped = defaultdict(list)
     for row in rows:
@@ -34,8 +34,10 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--input", type=Path, default=ROOT / "data" / "train_qa.jsonl")
     parser.add_argument("--out-dir", type=Path, default=ROOT / "data" / "train_split")
+    parser.add_argument("--val-fraction", type=float, default=0.15,
+                        help="Fraction of source chunks reserved for validation (default: 0.15).")
     args = parser.parse_args()
-    train, val = split_by_chunk(args.input, args.out_dir)
+    train, val = split_by_chunk(args.input, args.out_dir, val_fraction=args.val_fraction)
     print(f"train={len(train)} val={len(val)}; chunks are disjoint")
 
 

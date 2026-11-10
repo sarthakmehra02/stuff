@@ -86,3 +86,10 @@ Current checkpoint: the full local suite passes (16 tests). Phase 2 is complete.
 - Both fine-tuned conditions contain all 60 unique test IDs; questions and gold answers match the fixed test file. `finetuned_rag` rows have four retrieved chunks. Prompt fingerprint is unchanged and adapter path is recorded.
 - Mean latency: finetuned 3.86s; finetuned+RAG 6.62s. All five raw condition files now contain 60 rows each.
 - Next: run the required five-item blind-judge preview for all conditions, show verdicts, then wait before full judging.
+
+## Phase 6 judging and answer-key review (2026-11-02)
+
+- Completed all five blind-judge output files, each with 60 unique test IDs. The judge was NVIDIA `nvidia/nemotron-3-ultra-550b-a55b` via NIM; it received the question, gold answer, and candidate answer without the condition label. RAG conditions received a separate faithfulness judgment.
+- Reviewed all 60 gold entries against the four original PDFs before comparing generated answers. No substantive factual error in the answer facts was found; nine questions are not covered by the supplied corpus. Provenance gaps and q045 wording nuance are recorded in `docs/GOLD_KEY_AUDIT.md`.
+- Second-pass exact overall rates: zero-shot 7/60 (11.7%), prompted 13/60 (21.7%), RAG 30/60 (50.0%), fine-tuned 6/60 (10.0%), fine-tuned+RAG 30/60 (50.0%). The review reclassified six pair-level judge labels; see `results/second_pass_answer_audit.md`.
+- This assistant review is not independent human annotation. The raw answers and judge outputs remain preserved. Independent human/judge agreement, paired tests, and structured error analysis have not been completed.
