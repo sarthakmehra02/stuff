@@ -29,7 +29,9 @@ SYSTEM_BASE = (
     "are not sure, reply exactly: Not found in the documents"
 )
 REFUSAL_STRING = "Not found in the documents"
-MODEL_ID = "Qwen/Qwen2.5-3B-Instruct"
+# Override this from a notebook for controlled model comparisons without
+# changing the default 3B baseline (e.g. FARMER_MODEL_ID=Qwen/Qwen2.5-7B-Instruct).
+MODEL_ID = os.environ.get("FARMER_MODEL_ID", "Qwen/Qwen2.5-3B-Instruct")
 MAX_NEW_TOKENS = 300
 SEED = 42
 TOP_K = 4
