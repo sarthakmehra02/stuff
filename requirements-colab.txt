@@ -7,6 +7,7 @@ accelerate>=0.34,<2
 datasets>=3,<5
 sentence-transformers>=3,<4
 faiss-cpu>=1.8
+rank-bm25>=0.2
 gradio>=4,<7
 huggingface_hub>=0.25,<2
 python-dotenv>=1
