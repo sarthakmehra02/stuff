@@ -33,3 +33,9 @@ grading was completed without faithfulness calls because the NIM service
 intermittently returned empty faithfulness messages. The `judged_*.jsonl`
 files contain the per-question verdicts; `track_judging.py` remains available
 for progress checks on future reruns.
+
+## Independent Codex preview review
+
+See [codex_review_7b.md](codex_review_7b.md) for Codex's separate answer-by-
+answer review of q001–q005 across all five conditions. It is clearly separated
+from the full blind-judge results and is not human annotation.
