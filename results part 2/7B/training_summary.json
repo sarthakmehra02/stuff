@@ -1,0 +1,50 @@
+{
+  "model_id": "Qwen/Qwen2.5-7B-Instruct",
+  "train_examples": 426,
+  "validation_examples": 81,
+  "steps": 81,
+  "epochs": 3,
+  "smoke": false,
+  "wall_clock_seconds": 1170.8181335680001,
+  "final_train_loss": 1.2688086032867432,
+  "final_validation_loss": 1.7977745532989502,
+  "train_metrics": {
+    "train_final_loss": 1.2688086032867432,
+    "train_final_runtime": 78.5502,
+    "train_final_samples_per_second": 5.423,
+    "train_final_steps_per_second": 0.687,
+    "epoch": 3.0
+  },
+  "peak_gpu_mb": 9838.4482421875,
+  "overfitting_signal": false,
+  "max_seq_length": 1024,
+  "hyperparameters": {
+    "output_dir": "/content/drive/MyDrive/farmer-llm-reranker-7b/adapter_run/checkpoints",
+    "num_train_epochs": 3,
+    "per_device_train_batch_size": 2,
+    "gradient_accumulation_steps": 8,
+    "learning_rate": 0.0001,
+    "lr_scheduler_type": "cosine",
+    "warmup_ratio": 0.05,
+    "weight_decay": 0.01,
+    "fp16": true,
+    "bf16": false,
+    "optim": "paged_adamw_8bit",
+    "seed": 42,
+    "eval_strategy": "epoch",
+    "logging_steps": 10,
+    "save_strategy": "epoch",
+    "save_total_limit": 3,
+    "gradient_checkpointing": true,
+    "report_to": "none",
+    "max_steps": -1
+  },
+  "library_versions": {
+    "torch": "2.14.1+cu130",
+    "transformers": "4.57.6",
+    "peft": "0.21.2",
+    "trl": "0.29.1",
+    "bitsandbytes": "0.50.2",
+    "datasets": "4.8.5"
+  }
+}

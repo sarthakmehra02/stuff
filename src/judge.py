@@ -95,7 +95,7 @@ def _retrieval_hit(row: dict, gold: dict) -> bool | None:
 
 
 def run_judging(conditions: list[str], limit: int | None = None, results_dir: Path = PATHS.results_dir,
-                client=None, seed: int = 42) -> dict[str, Path]:
+                client=None, seed: int = 42, include_faithfulness: bool = True) -> dict[str, Path]:
     from src.nim_client import NIMClient
     client = client or NIMClient()
     cache_file = PATHS.cache_dir / "judge_cache.json"
@@ -136,7 +136,7 @@ def run_judging(conditions: list[str], limit: int | None = None, results_dir: Pa
             if verdict not in allowed:
                 verdict = "wrong" if gold["answerable"] else "hallucinated"
             faithfulness = ""
-            if condition in {"rag", "finetuned_rag"}:
+            if include_faithfulness and condition in {"rag", "finetuned_rag"}:
                 retrieved_chunks = [chunk_map[item["chunk_id"]]["text"] for item in row.get("retrieved", [])
                                     if item.get("chunk_id") in chunk_map]
                 context = "\n\n".join(retrieved_chunks)
@@ -169,9 +169,13 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--conditions", required=True)
     parser.add_argument("--limit", type=int)
+    parser.add_argument("--results-dir", type=Path, default=PATHS.results_dir)
+    parser.add_argument("--no-faithfulness", action="store_true",
+                        help="Only grade correct/partial/wrong/refused/hallucinated; skip RAG faithfulness calls.")
     args = parser.parse_args()
     conditions = [part.strip() for part in args.conditions.split(",") if part.strip()]
-    run_judging(conditions, args.limit)
+    run_judging(conditions, args.limit, results_dir=args.results_dir,
+                include_faithfulness=not args.no_faithfulness)
 
 
 if __name__ == "__main__":
