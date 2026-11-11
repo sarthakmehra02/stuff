@@ -28,11 +28,19 @@ def format_example(example: dict, tokenizer, max_seq_length: int = 384) -> dict:
     prefix = tokenizer.apply_chat_template(prompt_messages, tokenize=True, add_generation_prompt=True)
     full = tokenizer.apply_chat_template(full_messages, tokenize=True, add_generation_prompt=False)
     prefix_ids = list(prefix)
-    input_ids = list(full[:max_seq_length])
-    labels = [-100] * min(len(prefix_ids), len(input_ids)) + input_ids[len(prefix_ids):]
-    labels = labels[:len(input_ids)]
-    if not any(token != -100 for token in labels):
-        raise ValueError("Sample answer was truncated; increase max_seq_length or shorten the example")
+    answer_ids = list(full[len(prefix_ids):])
+    # Preserve the supervised answer whenever a model's chat template makes
+    # the prompt longer than the sequence budget. Keep the most recent prompt
+    # tokens (the question and assistant marker) and truncate only excess
+    # context from the left. If an answer itself is unusually long, truncate
+    # its tail rather than dropping the example entirely.
+    answer_ids = answer_ids[:max_seq_length]
+    available_prefix = max_seq_length - len(answer_ids)
+    prefix_ids = prefix_ids[-max(0, available_prefix):] if available_prefix else []
+    input_ids = prefix_ids + answer_ids
+    labels = [-100] * len(prefix_ids) + answer_ids
+    if not answer_ids:
+        raise ValueError("Sample answer is empty after tokenization")
     return {"input_ids": input_ids, "attention_mask": [1] * len(input_ids), "labels": labels}
 
 
